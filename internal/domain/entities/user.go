@@ -22,7 +22,7 @@ type User struct {
 	Birthday time.Time
 }
 
-func (u *User) New(Name string, Email string, Birthday time.Time) (*User, error) {
+func NewUser(name string, email string, birthday time.Time) (*User, error) {
 	uuid, error := uuid.NewV7()
 	if error != nil {
 		return nil, error
@@ -34,8 +34,8 @@ func (u *User) New(Name string, Email string, Birthday time.Time) (*User, error)
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Name:     Name,
-		Email:    Email,
-		Birthday: Birthday,
+		Name:     name,
+		Email:    email,
+		Birthday: birthday,
 	}, nil
 }
