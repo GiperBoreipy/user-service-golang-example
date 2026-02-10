@@ -6,6 +6,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type UserFilter struct {
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Id        uuid.UUID
+	Name      string
+	Email     string
+	Birthday  time.Time
+}
+
 type User struct {
 	Meta
 	Name     string
