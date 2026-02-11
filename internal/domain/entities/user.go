@@ -3,6 +3,8 @@ package entities
 import (
 	"time"
 
+	"user_service/internal/domain/errors"
+
 	"github.com/google/uuid"
 )
 
@@ -26,6 +28,10 @@ func NewUser(name string, email string, birthday time.Time) (*User, error) {
 	uuid, error := uuid.NewV7()
 	if error != nil {
 		return nil, error
+	}
+
+	if email == "" {
+		return nil, errors.UserEmailNotValidError
 	}
 
 	return &User{

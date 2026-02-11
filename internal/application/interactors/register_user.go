@@ -11,8 +11,6 @@ type RegisterUser struct {
 }
 
 func (r *RegisterUser) execute(name string, email string, birthday time.Time) error {
-	// TODO: валидация
-
 	entity, error := entities.NewUser(name, email, birthday)
 	if error != nil {
 		// TODO: ошибку кастомную возвращать
