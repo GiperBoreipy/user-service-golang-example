@@ -12,20 +12,21 @@ import (
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
 type UserFilter struct {
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Id           uuid.UUID
-	Name         string
-	Email        string
-	Birthday     time.Time
-	HashPassword string
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	Id             *uuid.UUID
+	Name           *string
+	Email          *string
+	Birthday       *time.Time
+	HashedPassword *string
 }
 
 type User struct {
 	Meta
-	Name     string
-	Email    string
-	Birthday time.Time
+	Name           string
+	Email          string
+	Birthday       time.Time
+	HashedPassword string
 }
 
 func NewUser(name string, email string, birthday time.Time) (*User, error) {

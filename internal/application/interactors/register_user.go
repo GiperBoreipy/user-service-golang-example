@@ -13,26 +13,25 @@ type RegisterUser struct {
 	AccessTokenService app_interfaces.AccessTokenService
 }
 
-func (r *RegisterUser) execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (app_entities.AccessToken, error) {
-	entity, error := entities.NewUser(name, email, birthday)
-	if error != nil {
-		// TODO: ошибку кастомную возвращать
-		return app_entities.AccessToken{}, error
+func (r *RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (*app_entities.AccessToken, error) {
+	user, err := entities.NewUser(name, email, birthday)
+	if err != nil {
+		return nil, err
 	}
 
-	go r.UserRepository.Add(entity)
+	go r.UserRepository.Add(user)
 
-	accessToken, error := r.AccessTokenService.CreateAccessToken(entity.Id)
-	if error != nil {
-		return app_entities.AccessToken{}, error
+	accessToken, err := r.AccessTokenService.CreateAccessToken(user.Id)
+	if err != nil {
+		return nil, err
 	}
 
-	refreshToken, error := r.AccessTokenService.CreateRefreshToken(entity.Id)
-	if error != nil {
-		return app_entities.AccessToken{}, error
+	refreshToken, err := r.AccessTokenService.CreateRefreshToken(user.Id)
+	if err != nil {
+		return nil, err
 	}
 
-	return app_entities.AccessToken{
+	return &app_entities.AccessToken{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
