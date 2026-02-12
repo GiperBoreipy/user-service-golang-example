@@ -2,7 +2,7 @@ package interactors
 
 import (
 	"time"
-	app_entities "user_service/internal/application/entities"
+	"user_service/internal/application/data_objects"
 	app_interfaces "user_service/internal/application/interfaces"
 	"user_service/internal/domain/entities"
 	"user_service/internal/domain/interfaces"
@@ -13,7 +13,7 @@ type RegisterUser struct {
 	AccessTokenService app_interfaces.AccessTokenService
 }
 
-func (r *RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (*app_entities.AccessToken, error) {
+func (r *RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (*data_objects.AccessToken, error) {
 	user, err := entities.NewUser(name, email, birthday)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (r *RegisterUser) Execute(name string, email string, birthday time.Time, fi
 		return nil, err
 	}
 
-	return &app_entities.AccessToken{
+	return &data_objects.AccessToken{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil

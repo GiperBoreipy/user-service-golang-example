@@ -1,7 +1,7 @@
 package interactors
 
 import (
-	app_entities "user_service/internal/application/entities"
+	"user_service/internal/application/data_objects"
 	app_interfaces "user_service/internal/application/interfaces"
 	"user_service/internal/domain/entities"
 	"user_service/internal/domain/errors"
@@ -14,7 +14,7 @@ type LoginUser struct {
 	PasswordHasher     app_interfaces.PasswordHasher
 }
 
-func (l *LoginUser) Execute(email string, password string) (*app_entities.AccessToken, error) {
+func (l *LoginUser) Execute(email string, password string) (*data_objects.AccessToken, error) {
 	users, err := l.UserRepository.Get(entities.UserFilter{Email: &email})
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (l *LoginUser) Execute(email string, password string) (*app_entities.Access
 		return nil, err
 	}
 
-	return &app_entities.AccessToken{
+	return &data_objects.AccessToken{
 		AccessToken: accessToken,
 	}, nil
 }
