@@ -19,7 +19,9 @@ func (r *RegisterUser) Execute(name string, email string, birthday time.Time, fi
 		return nil, err
 	}
 
-	go r.UserRepository.Add(user)
+	if err := r.UserRepository.Add(user); err != nil {
+		return nil, err
+	}
 
 	accessToken, err := r.AccessTokenService.CreateAccessToken(user.Id)
 	if err != nil {
