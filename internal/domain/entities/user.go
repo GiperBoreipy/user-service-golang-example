@@ -29,7 +29,7 @@ type User struct {
 	HashedPassword string
 }
 
-func NewUser(name string, email string, birthday time.Time) (*User, error) {
+func NewUser(name string, email string, birthday time.Time, hashedPassword string) (*User, error) {
 	uuid, error := uuid.NewV7()
 	if error != nil {
 		return nil, error
@@ -45,8 +45,9 @@ func NewUser(name string, email string, birthday time.Time) (*User, error) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Name:     name,
-		Email:    email,
-		Birthday: birthday,
+		Name:           name,
+		Email:          email,
+		Birthday:       birthday,
+		HashedPassword: hashedPassword,
 	}, nil
 }
