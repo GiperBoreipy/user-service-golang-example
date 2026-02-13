@@ -5,15 +5,15 @@ import (
 	"user_service/internal/application/interactors"
 )
 
-type userHandler struct {
+type handlerUser struct {
 	registerUser *interactors.RegisterUser
 	loginUser    *interactors.LoginUser
 	getUser      *interactors.GetUser
 	getAllUsers  *interactors.GetAllUsers
 }
 
-func NewHandler(registerUser *interactors.RegisterUser, loginUser *interactors.LoginUser, getUser *interactors.GetUser, getAllUsers *interactors.GetAllUsers) *userHandler {
-	return &userHandler{
+func NewHandlerUser(registerUser *interactors.RegisterUser, loginUser *interactors.LoginUser, getUser *interactors.GetUser, getAllUsers *interactors.GetAllUsers) *handlerUser {
+	return &handlerUser{
 		registerUser: registerUser,
 		loginUser:    loginUser,
 		getUser:      getUser,
@@ -21,6 +21,14 @@ func NewHandler(registerUser *interactors.RegisterUser, loginUser *interactors.L
 	}
 }
 
-func (u *userHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
+func (h *handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func (h *handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
+	token, ok L
 }
