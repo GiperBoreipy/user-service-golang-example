@@ -5,17 +5,17 @@ import (
 	"net/http"
 	"user_service/internal/application/data_objects"
 	"user_service/internal/application/interactors"
-	"user_service/internal/presentation/api/schemas"
+	"user_service/internal/presentation/schemas"
 )
 
 type handlerUser struct {
-	registerUser *interactors.RegisterUser
-	loginUser    *interactors.LoginUser
-	getUser      *interactors.GetUser
-	getAllUsers  *interactors.GetAllUsers
+	registerUser interactors.RegisterUser
+	loginUser    interactors.LoginUser
+	getUser      interactors.GetUser
+	getAllUsers  interactors.GetAllUsers
 }
 
-func NewHandlerUser(registerUser *interactors.RegisterUser, loginUser *interactors.LoginUser, getUser *interactors.GetUser, getAllUsers *interactors.GetAllUsers) *handlerUser {
+func NewHandlerUser(registerUser interactors.RegisterUser, loginUser interactors.LoginUser, getUser interactors.GetUser, getAllUsers interactors.GetAllUsers) *handlerUser {
 	return &handlerUser{
 		registerUser: registerUser,
 		loginUser:    loginUser,

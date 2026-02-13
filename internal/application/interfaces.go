@@ -1,4 +1,4 @@
-package interactors
+package application
 
 import (
 	data_objects "user_service/internal/application/data_objects"
@@ -10,4 +10,17 @@ type AccessTokenService interface {
 	CreateAccessToken(UserId uuid.UUID) (data_objects.UserAuthToken, error)
 	CreateRefreshToken(UserId uuid.UUID) (data_objects.UserAuthToken, error)
 	GetUserId(authToken data_objects.UserAuthToken) (uuid.UUID, error)
+}
+
+type PasswordHasher interface {
+	HashPassword(password string) (string, error)
+	VerifyPassword(password string, hashedPassword string) (bool, error)
+}
+
+type Repository[ET any, FT any] interface {
+	Add(entity ET) error
+	Delete(Id uuid.UUID) error
+	Update(entity ET) error
+	Get(filter FT) ([]ET, error)
+	GetOne(filter FT) (ET, error)
 }

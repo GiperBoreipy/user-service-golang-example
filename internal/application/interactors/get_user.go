@@ -1,32 +1,37 @@
 package interactors
 
 import (
-	data_objects "user_service/internal/application/data_objects"
-	app_interfaces "user_service/internal/application/interfaces"
+	"user_service/internal/application"
+	"user_service/internal/application/data_objects"
 	"user_service/internal/domain/entities"
-	"user_service/internal/domain/errors"
-	"user_service/internal/domain/interfaces"
 )
 
 type GetUser struct {
-	UserRepository     interfaces.Repository[*entities.User, entities.UserFilter]
-	AccessTokenService app_interfaces.AccessTokenService
+	userRepository     application.Repository[*entities.User, application.UserFilter]
+	accessTokenService application.AccessTokenService
 }
 
-func (g *GetUser) Execute(authToken data_objects.UserAuthToken) (*entities.User, error) {
-	userId, err := g.AccessTokenService.GetUserId(authToken)
+func NewGetUser(userRepository application.Repository[*entities.User, application.UserFilter], accessTokenService application.AccessTokenService) *GetUser {
+	return &GetUser{
+		userRepository:     userRepository,
+		accessTokenService: accessTokenService,
+	}
+}
+
+func (i *GetUser) Execute(authToken data_objects.UserAuthToken) (entities.User, error) {
+	userId, err := i.accessTokenService.GetUserId(authToken)
 	if err != nil {
-		return nil, err
+		return entities.User{}, err
 	}
 
-	users, err := g.UserRepository.Get(entities.UserFilter{Id: &userId})
+	user, err := i.userRepository.GetOne(application.UserFilter{Id: userId})
 	if err != nil {
-		return nil, err
+		return entities.User{}, err
 	}
 
-	if len(users) == 0 {
-		return nil, errors.UserNotFoundError
+	if user == nil {
+		return entities.User{}, application.UserNotFoundError
 	}
 
-	return users[0], nil
+	return *user, nil
 }

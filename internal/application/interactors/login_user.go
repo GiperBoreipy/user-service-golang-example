@@ -1,46 +1,44 @@
 package interactors
 
 import (
+	"user_service/internal/application"
 	"user_service/internal/application/data_objects"
-	app_interfaces "user_service/internal/application/interfaces"
 	"user_service/internal/domain/entities"
-	"user_service/internal/domain/errors"
-	"user_service/internal/domain/interfaces"
 )
 
 type LoginUser struct {
-	UserRepository     interfaces.Repository[*entities.User, entities.UserFilter]
-	AccessTokenService app_interfaces.AccessTokenService
-	PasswordHasher     app_interfaces.PasswordHasher
+	userRepository     application.Repository[*entities.User, application.UserFilter]
+	accessTokenService application.AccessTokenService
+	passwordHasher     application.PasswordHasher
 }
 
-func (l *LoginUser) Execute(email string, password string) (*data_objects.AccessToken, error) {
-	users, err := l.UserRepository.Get(entities.UserFilter{Email: &email})
+func NewLoginUser(userRepository application.Repository[*entities.User, application.UserFilter], accessTokenService application.AccessTokenService, passwordHasher application.PasswordHasher) *LoginUser {
+	return &LoginUser{
+		userRepository:     userRepository,
+		accessTokenService: accessTokenService,
+		passwordHasher:     passwordHasher,
+	}
+}
+
+func (i *LoginUser) Execute(email string, password string) (data_objects.AccessToken, error) {
+	user, err := i.userRepository.GetOne(application.UserFilter{Email: email})
 	if err != nil {
-		return nil, err
+		return data_objects.AccessToken{}, err
 	}
 
-	if len(users) == 0 {
-		return nil, errors.UserNotFoundError
-	}
-
-	user := users[0]
-
-	status, err := l.PasswordHasher.VerifyPassword(password, user.HashedPassword)
+	status, err := i.passwordHasher.VerifyPassword(password, user.HashedPassword)
 	if err != nil {
-		return nil, err
+		return data_objects.AccessToken{}, err
+	} else if !status {
+		return data_objects.AccessToken{}, application.UserPasswordNotMatchError
 	}
 
-	if !status {
-		return nil, errors.UserPasswordNotMatchError
-	}
-
-	accessToken, err := l.AccessTokenService.CreateAccessToken(user.Id)
+	accessToken, err := i.accessTokenService.CreateAccessToken(user.Id)
 	if err != nil {
-		return nil, err
+		return data_objects.AccessToken{}, err
 	}
 
-	return &data_objects.AccessToken{
+	return data_objects.AccessToken{
 		AccessToken: accessToken,
 	}, nil
 }

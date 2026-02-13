@@ -1,11 +1,12 @@
-package handlers
+package presentation
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
 
-	domain_errors "user_service/internal/domain/errors"
+	"user_service/internal/application"
+	"user_service/internal/domain/entities"
 )
 
 func sendError(w http.ResponseWriter, err error) {
@@ -13,13 +14,13 @@ func sendError(w http.ResponseWriter, err error) {
 	message := "Internal server error"
 
 	switch {
-	case errors.Is(err, domain_errors.UserEmailNotValidError):
+	case errors.Is(err, entities.UserEmailNotValidError):
 		statusCode = http.StatusBadRequest
 		message = "User email not valid"
-	case errors.Is(err, domain_errors.UserNotFoundError):
+	case errors.Is(err, application.UserNotFoundError):
 		statusCode = http.StatusNotFound
 		message = "User not found"
-	case errors.Is(err, domain_errors.UserPasswordNotMatchError):
+	case errors.Is(err, application.UserPasswordNotMatchError):
 		statusCode = http.StatusUnauthorized
 		message = "User password not match"
 	}

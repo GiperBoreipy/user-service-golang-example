@@ -2,38 +2,56 @@ package interactors
 
 import (
 	"time"
+
+	"user_service/internal/application"
 	"user_service/internal/application/data_objects"
-	app_interfaces "user_service/internal/application/interfaces"
 	"user_service/internal/domain/entities"
-	"user_service/internal/domain/interfaces"
 )
 
 type RegisterUser struct {
-	UserRepository     interfaces.Repository[*entities.User, entities.UserFilter]
-	AccessTokenService app_interfaces.AccessTokenService
+	userRepository     application.Repository[*entities.User, application.UserFilter]
+	accessTokenService application.AccessTokenService
+	passwordHasher     application.PasswordHasher
 }
 
-func (r *RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (*data_objects.AccessToken, error) {
-	user, err := entities.NewUser(name, email, birthday)
+func NewRegisterUser(userRepository application.Repository[*entities.User, application.UserFilter], accessTokenService application.AccessTokenService, passwordHasher application.PasswordHasher) *RegisterUser {
+	return &RegisterUser{
+		userRepository:     userRepository,
+		accessTokenService: accessTokenService,
+		passwordHasher:     passwordHasher,
+	}
+}
+
+func (i *RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (data_objects.AccessToken, error) {
+	if firstPassword != secondPassword {
+		return data_objects.AccessToken{}, application.UserPasswordNotMatchError
+	}
+
+	password, err := i.passwordHasher.HashPassword(firstPassword)
 	if err != nil {
-		return nil, err
+		return data_objects.AccessToken{}, err
 	}
 
-	if err := r.UserRepository.Add(user); err != nil {
-		return nil, err
-	}
-
-	accessToken, err := r.AccessTokenService.CreateAccessToken(user.Id)
+	user, err := entities.NewUser(name, email, birthday, password)
 	if err != nil {
-		return nil, err
+		return data_objects.AccessToken{}, err
 	}
 
-	refreshToken, err := r.AccessTokenService.CreateRefreshToken(user.Id)
+	if err := i.userRepository.Add(user); err != nil {
+		return data_objects.AccessToken{}, err
+	}
+
+	accessToken, err := i.accessTokenService.CreateAccessToken(user.Id)
 	if err != nil {
-		return nil, err
+		return data_objects.AccessToken{}, err
 	}
 
-	return &data_objects.AccessToken{
+	refreshToken, err := i.accessTokenService.CreateRefreshToken(user.Id)
+	if err != nil {
+		return data_objects.AccessToken{}, err
+	}
+
+	return data_objects.AccessToken{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
