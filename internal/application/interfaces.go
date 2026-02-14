@@ -19,7 +19,7 @@ type PasswordHasher interface {
 
 type Repository[ET any, FT any] interface {
 	Add(entity ET) error
-	Delete(Id uuid.UUID) error
+	Delete(entity ET) error
 	Update(entity ET) error
 	Get(filter FT) ([]ET, error)
 	GetOne(filter FT) (ET, error)

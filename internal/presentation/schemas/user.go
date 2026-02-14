@@ -9,3 +9,8 @@ type RegisterUserInSchema struct {
 	FirstPassword  string    `json:"first_password"`
 	SecondPassword string    `json:"second_password"`
 }
+
+type LoginUserInSchema struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

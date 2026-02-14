@@ -9,7 +9,7 @@ import (
 	"user_service/internal/domain/entities"
 )
 
-func sendError(w http.ResponseWriter, err error) {
+func SendError(w http.ResponseWriter, err error) {
 	statusCode := http.StatusInternalServerError
 	message := "Internal server error"
 

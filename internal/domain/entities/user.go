@@ -20,17 +20,17 @@ type User struct {
 	HashedPassword string
 }
 
-func NewUser(name string, email string, birthday time.Time, hashedPassword string) (*User, error) {
+func NewUser(name string, email string, birthday time.Time, hashedPassword string) (User, error) {
 	uuid, error := uuid.NewV7()
 	if error != nil {
-		return nil, error
+		return User{}, error
 	}
 
 	if !emailRegex.MatchString(email) {
-		return nil, UserEmailNotValidError
+		return User{}, UserEmailNotValidError
 	}
 
-	return &User{
+	return User{
 		Meta: Meta{
 			Id:        uuid,
 			CreatedAt: time.Now(),

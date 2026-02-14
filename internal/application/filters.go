@@ -7,11 +7,11 @@ import (
 )
 
 type UserFilter struct {
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	Id             uuid.UUID
-	Name           string
-	Email          string
-	Birthday       time.Time
-	HashedPassword string
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	Id             *uuid.UUID
+	Name           *string
+	Email          *string
+	Birthday       *time.Time
+	HashedPassword *string
 }

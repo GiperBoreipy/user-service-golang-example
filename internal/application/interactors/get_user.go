@@ -7,18 +7,18 @@ import (
 )
 
 type GetUser struct {
-	userRepository     application.Repository[*entities.User, application.UserFilter]
+	userRepository     application.Repository[entities.User, application.UserFilter]
 	accessTokenService application.AccessTokenService
 }
 
-func NewGetUser(userRepository application.Repository[*entities.User, application.UserFilter], accessTokenService application.AccessTokenService) *GetUser {
-	return &GetUser{
+func NewGetUser(userRepository application.Repository[entities.User, application.UserFilter], accessTokenService application.AccessTokenService) GetUser {
+	return GetUser{
 		userRepository:     userRepository,
 		accessTokenService: accessTokenService,
 	}
 }
 
-func (i *GetUser) Execute(authToken data_objects.UserAuthToken) (entities.User, error) {
+func (i GetUser) Execute(authToken data_objects.UserAuthToken) (entities.User, error) {
 	userId, err := i.accessTokenService.GetUserId(authToken)
 	if err != nil {
 		return entities.User{}, err
@@ -29,9 +29,9 @@ func (i *GetUser) Execute(authToken data_objects.UserAuthToken) (entities.User, 
 		return entities.User{}, err
 	}
 
-	if user == nil {
+	if user == (entities.User{}) {
 		return entities.User{}, application.UserNotFoundError
 	}
 
-	return *user, nil
+	return user, nil
 }

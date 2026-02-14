@@ -9,20 +9,20 @@ import (
 )
 
 type RegisterUser struct {
-	userRepository     application.Repository[*entities.User, application.UserFilter]
+	userRepository     application.Repository[entities.User, application.UserFilter]
 	accessTokenService application.AccessTokenService
 	passwordHasher     application.PasswordHasher
 }
 
-func NewRegisterUser(userRepository application.Repository[*entities.User, application.UserFilter], accessTokenService application.AccessTokenService, passwordHasher application.PasswordHasher) *RegisterUser {
-	return &RegisterUser{
+func NewRegisterUser(userRepository application.Repository[entities.User, application.UserFilter], accessTokenService application.AccessTokenService, passwordHasher application.PasswordHasher) RegisterUser {
+	return RegisterUser{
 		userRepository:     userRepository,
 		accessTokenService: accessTokenService,
 		passwordHasher:     passwordHasher,
 	}
 }
 
-func (i *RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (data_objects.AccessToken, error) {
+func (i RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (data_objects.AccessToken, error) {
 	if firstPassword != secondPassword {
 		return data_objects.AccessToken{}, application.UserPasswordNotMatchError
 	}

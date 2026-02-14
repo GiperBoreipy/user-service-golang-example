@@ -7,20 +7,20 @@ import (
 )
 
 type LoginUser struct {
-	userRepository     application.Repository[*entities.User, application.UserFilter]
+	userRepository     application.Repository[entities.User, application.UserFilter]
 	accessTokenService application.AccessTokenService
 	passwordHasher     application.PasswordHasher
 }
 
-func NewLoginUser(userRepository application.Repository[*entities.User, application.UserFilter], accessTokenService application.AccessTokenService, passwordHasher application.PasswordHasher) *LoginUser {
-	return &LoginUser{
+func NewLoginUser(userRepository application.Repository[entities.User, application.UserFilter], accessTokenService application.AccessTokenService, passwordHasher application.PasswordHasher) LoginUser {
+	return LoginUser{
 		userRepository:     userRepository,
 		accessTokenService: accessTokenService,
 		passwordHasher:     passwordHasher,
 	}
 }
 
-func (i *LoginUser) Execute(email string, password string) (data_objects.AccessToken, error) {
+func (i LoginUser) Execute(email string, password string) (data_objects.AccessToken, error) {
 	user, err := i.userRepository.GetOne(application.UserFilter{Email: email})
 	if err != nil {
 		return data_objects.AccessToken{}, err

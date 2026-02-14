@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"user_service/internal/application/data_objects"
 	"user_service/internal/application/interactors"
+	"user_service/internal/presentation"
 	"user_service/internal/presentation/schemas"
 )
 
@@ -15,8 +16,8 @@ type handlerUser struct {
 	getAllUsers  interactors.GetAllUsers
 }
 
-func NewHandlerUser(registerUser interactors.RegisterUser, loginUser interactors.LoginUser, getUser interactors.GetUser, getAllUsers interactors.GetAllUsers) *handlerUser {
-	return &handlerUser{
+func NewHandlerUser(registerUser interactors.RegisterUser, loginUser interactors.LoginUser, getUser interactors.GetUser, getAllUsers interactors.GetAllUsers) handlerUser {
+	return handlerUser{
 		registerUser: registerUser,
 		loginUser:    loginUser,
 		getUser:      getUser,
@@ -24,7 +25,7 @@ func NewHandlerUser(registerUser interactors.RegisterUser, loginUser interactors
 	}
 }
 
-func (h *handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
+func (h handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -40,7 +41,7 @@ func (h *handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request
 
 	accessTokens, err := h.registerUser.Execute(requestData.Name, requestData.Email, requestData.Birthday, requestData.FirstPassword, requestData.SecondPassword)
 	if err != nil {
-		sendError(w, err)
+		presentation.SendError(w, err)
 		return
 	}
 
@@ -49,11 +50,37 @@ func (h *handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request
 	_ = json.NewEncoder(w).Encode(accessTokens)
 }
 
-func (h *handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
+func (h handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
+	defer r.Body.Close()
+
+	var requestData schemas.LoginUserInSchema
+	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	accessToken, err := h.loginUser.Execute(requestData.Email, requestData.Password)
+	if err != nil {
+		presentation.SendError(w, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(accessToken)
 }
 
-func (h *handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
+func (h handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	authToken, ok := r.Context().Value(data_objects.UserAuthTokenContextKey).(data_objects.UserAuthToken)
 	if !ok {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -62,7 +89,7 @@ func (h *handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.getUser.Execute(authToken)
 	if err != nil {
-		sendError(w, err)
+		presentation.SendError(w, err)
 		return
 	}
 
