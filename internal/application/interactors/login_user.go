@@ -21,7 +21,7 @@ func NewLoginUser(userRepository application.Repository[entities.User, applicati
 }
 
 func (i LoginUser) Execute(email string, password string) (data_objects.AccessToken, error) {
-	user, err := i.userRepository.GetOne(application.UserFilter{Email: email})
+	user, err := i.userRepository.GetOne(application.UserFilter{Email: &email})
 	if err != nil {
 		return data_objects.AccessToken{}, err
 	}
@@ -30,7 +30,7 @@ func (i LoginUser) Execute(email string, password string) (data_objects.AccessTo
 	if err != nil {
 		return data_objects.AccessToken{}, err
 	} else if !status {
-		return data_objects.AccessToken{}, application.UserPasswordNotMatchError
+		return data_objects.AccessToken{}, application.ErrUserPasswordNotMatch
 	}
 
 	accessToken, err := i.accessTokenService.CreateAccessToken(user.Id)

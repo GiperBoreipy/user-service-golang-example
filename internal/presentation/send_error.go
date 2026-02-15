@@ -14,13 +14,13 @@ func SendError(w http.ResponseWriter, err error) {
 	message := "Internal server error"
 
 	switch {
-	case errors.Is(err, entities.UserEmailNotValidError):
+	case errors.Is(err, entities.ErrUserEmailNotValid):
 		statusCode = http.StatusBadRequest
 		message = "User email not valid"
-	case errors.Is(err, application.UserNotFoundError):
+	case errors.Is(err, application.ErrUserNotFound):
 		statusCode = http.StatusNotFound
 		message = "User not found"
-	case errors.Is(err, application.UserPasswordNotMatchError):
+	case errors.Is(err, application.ErrUserPasswordNotMatch):
 		statusCode = http.StatusUnauthorized
 		message = "User password not match"
 	}

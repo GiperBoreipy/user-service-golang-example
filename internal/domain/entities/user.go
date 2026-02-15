@@ -10,7 +10,7 @@ import (
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-var UserEmailNotValidError = errors.New("user email not valid")
+var ErrUserEmailNotValid = errors.New("user email not valid")
 
 type User struct {
 	Meta
@@ -27,7 +27,7 @@ func NewUser(name string, email string, birthday time.Time, hashedPassword strin
 	}
 
 	if !emailRegex.MatchString(email) {
-		return User{}, UserEmailNotValidError
+		return User{}, ErrUserEmailNotValid
 	}
 
 	return User{

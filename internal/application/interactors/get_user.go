@@ -24,13 +24,13 @@ func (i GetUser) Execute(authToken data_objects.UserAuthToken) (entities.User, e
 		return entities.User{}, err
 	}
 
-	user, err := i.userRepository.GetOne(application.UserFilter{Id: userId})
+	user, err := i.userRepository.GetOne(application.UserFilter{Id: &userId})
 	if err != nil {
 		return entities.User{}, err
 	}
 
 	if user == (entities.User{}) {
-		return entities.User{}, application.UserNotFoundError
+		return entities.User{}, application.ErrUserNotFound
 	}
 
 	return user, nil

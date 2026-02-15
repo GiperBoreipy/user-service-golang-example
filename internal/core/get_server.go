@@ -8,13 +8,24 @@ import (
 )
 
 func GetServer() *http.Server {
-	userRepository := impl.NewMemoryUserRepository()
+	config := LoadConfig()
 
-	registerUser := interactors.NewRegisterUser()
-	loginUser := interactors.NewLoginUser()
-	getUser := interactors.NewGetUser()
-	getAllUsers := interactors.NewGetAllUsers()
+	userRepository := impl.NewMemoryUserRepository()
+	accessTokenService := impl.NewJwtAccessTokenServiceImpl(
+		config.AccessTokenSecret,
+		config.RefreshTokenSecret,
+		config.AccessTokenTTL,
+		config.RefreshTokenTTL,
+	)
+	passwordHasher := impl.NewBcryptPasswordHasher(0)
+
+	registerUser := interactors.NewRegisterUser(&userRepository, accessTokenService, passwordHasher)
+	loginUser := interactors.NewLoginUser(&userRepository, accessTokenService, passwordHasher)
+	getUser := interactors.NewGetUser(&userRepository, accessTokenService)
+	getAllUsers := interactors.NewGetAllUsers(&userRepository)
 
 	mux := http.NewServeMux()
 	handlers.InitUserHandlers(mux, registerUser, loginUser, getUser, getAllUsers)
+
+	return &http.Server{Handler: mux}
 }

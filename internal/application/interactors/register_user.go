@@ -24,7 +24,7 @@ func NewRegisterUser(userRepository application.Repository[entities.User, applic
 
 func (i RegisterUser) Execute(name string, email string, birthday time.Time, firstPassword string, secondPassword string) (data_objects.AccessToken, error) {
 	if firstPassword != secondPassword {
-		return data_objects.AccessToken{}, application.UserPasswordNotMatchError
+		return data_objects.AccessToken{}, application.ErrUserPasswordNotMatch
 	}
 
 	password, err := i.passwordHasher.HashPassword(firstPassword)
