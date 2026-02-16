@@ -2,6 +2,7 @@ package core
 
 import (
 	"net/http"
+
 	"user_service/internal/application/interactors"
 	"user_service/internal/infra/impl"
 	"user_service/internal/presentation/handlers"
@@ -27,5 +28,5 @@ func GetServer() *http.Server {
 	mux := http.NewServeMux()
 	handlers.InitUserHandlers(mux, registerUser, loginUser, getUser, getAllUsers)
 
-	return &http.Server{Handler: mux}
+	return &http.Server{Handler: mux, Addr: ":8080"}
 }

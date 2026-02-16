@@ -45,9 +45,14 @@ func (h handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	response := schemas.AccessTokenOutSchema{
+		AccessToken:  string(accessTokens.AccessToken),
+		RefreshToken: string(accessTokens.RefreshToken),
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(accessTokens)
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 func (h handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,9 +75,11 @@ func (h handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := schemas.LoginUserOutSchema{AccessToken: string(accessToken.AccessToken)}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(accessToken)
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 func (h handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +100,16 @@ func (h handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := schemas.UserOutSchema{
+		Id:        user.Id.String(),
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		Name:      user.Name,
+		Email:     user.Email,
+		Birthday:  user.Birthday,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(user)
+	_ = json.NewEncoder(w).Encode(response)
 }

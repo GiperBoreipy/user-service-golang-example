@@ -1,0 +1,17 @@
+.git
+.idea
+.vscode
+*.md
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+/bin
+/dist
+/build
+
+.env
+
+**/*_test.go
+
