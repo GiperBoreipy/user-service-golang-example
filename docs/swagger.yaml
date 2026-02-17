@@ -1,4 +1,143 @@
+basePath: /
+definitions:
+  schemas.AccessTokenOutSchema:
+    properties:
+      AccessToken:
+        type: string
+      RefreshToken:
+        type: string
+    type: object
+  schemas.ErrorOutSchema:
+    properties:
+      message:
+        type: string
+    type: object
+  schemas.LoginUserInSchema:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  schemas.LoginUserOutSchema:
+    properties:
+      AccessToken:
+        type: string
+    type: object
+  schemas.RegisterUserInSchema:
+    properties:
+      birthday:
+        type: string
+      email:
+        type: string
+      first_password:
+        type: string
+      name:
+        type: string
+      second_password:
+        type: string
+    type: object
+  schemas.UserOutSchema:
+    properties:
+      Birthday:
+        type: string
+      CreatedAt:
+        type: string
+      Email:
+        type: string
+      Id:
+        type: string
+      Name:
+        type: string
+      UpdatedAt:
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+  description: User service example API
+  title: User Service API
+  version: "1.0"
+paths:
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.LoginUserInSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.LoginUserOutSchema'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+      summary: Login user
+      tags:
+      - user
+  /user/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.UserOutSchema'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+      summary: Current user
+      tags:
+      - user
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: register request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.RegisterUserInSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.AccessTokenOutSchema'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/schemas.ErrorOutSchema'
+      summary: Register user
+      tags:
+      - user
 swagger: "2.0"

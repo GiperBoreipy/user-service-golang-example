@@ -1,5 +1,10 @@
 package main
 
+// @title User Service API
+// @version 1.0
+// @description User service example API
+// @BasePath /
+
 import (
 	"context"
 	"log"

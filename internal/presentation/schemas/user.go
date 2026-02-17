@@ -4,7 +4,7 @@ import "time"
 
 type RegisterUserInSchema struct {
 	Name           string    `json:"name"`
-	Birthday       time.Time `json:"birthday"`
+	Birthday       time.Time `json:"birthday" example:"1999-02-17T00:00:00Z"`
 	Email          string    `json:"email"`
 	FirstPassword  string    `json:"first_password"`
 	SecondPassword string    `json:"second_password"`
@@ -34,5 +34,5 @@ type UserOutSchema struct {
 	UpdatedAt time.Time `json:"UpdatedAt"`
 	Name      string    `json:"Name"`
 	Email     string    `json:"Email"`
-	Birthday  time.Time `json:"Birthday"`
+	Birthday  time.Time `json:"Birthday" example:"1999-02-17T00:00:00Z"`
 }

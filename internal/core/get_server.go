@@ -3,6 +3,10 @@ package core
 import (
 	"net/http"
 
+	_ "user_service/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
+
 	"user_service/internal/application/interactors"
 	"user_service/internal/infra/impl"
 	"user_service/internal/presentation/handlers"
@@ -27,6 +31,7 @@ func GetServer() *http.Server {
 
 	mux := http.NewServeMux()
 	handlers.InitUserHandlers(mux, registerUser, loginUser, getUser, getAllUsers)
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	return &http.Server{Handler: mux, Addr: ":8080"}
 }

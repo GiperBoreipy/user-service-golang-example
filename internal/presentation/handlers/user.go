@@ -25,6 +25,16 @@ func NewHandlerUser(registerUser interactors.RegisterUser, loginUser interactors
 	}
 }
 
+// RegisterUserHandler godoc
+// @Summary Register user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body schemas.RegisterUserInSchema true "register request"
+// @Success 200 {object} schemas.AccessTokenOutSchema
+// @Failure 400 {object} schemas.ErrorOutSchema
+// @Failure 405 {object} schemas.ErrorOutSchema
+// @Router /user/register [post]
 func (h handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -55,6 +65,17 @@ func (h handlerUser) RegisterUserHandler(w http.ResponseWriter, r *http.Request)
 	_ = json.NewEncoder(w).Encode(response)
 }
 
+// LoginUserHandler godoc
+// @Summary Login user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body schemas.LoginUserInSchema true "login request"
+// @Success 200 {object} schemas.LoginUserOutSchema
+// @Failure 400 {object} schemas.ErrorOutSchema
+// @Failure 401 {object} schemas.ErrorOutSchema
+// @Failure 405 {object} schemas.ErrorOutSchema
+// @Router /user/login [post]
 func (h handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -82,6 +103,14 @@ func (h handlerUser) LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(response)
 }
 
+// MeHandler godoc
+// @Summary Current user
+// @Tags user
+// @Produce json
+// @Success 200 {object} schemas.UserOutSchema
+// @Failure 401 {object} schemas.ErrorOutSchema
+// @Failure 405 {object} schemas.ErrorOutSchema
+// @Router /user/me [get]
 func (h handlerUser) MeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
